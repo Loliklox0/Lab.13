@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Лабораторная 13 — Сортировка JS</title>
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    background: #0a0a0f;
+    background: linear-gradient(135deg, #100010, #1a001a, #000000);
+    color: #e5e0ff;
+    padding: 30px;
+}
+
+.card {
+    max-width: 520px;
+    margin: auto;
+    background: rgba(40, 0, 60, 0.35);
+    backdrop-filter: blur(10px);
+    padding: 25px;
+    border-radius: 18px;
+    border: 1px solid rgba(150, 80, 255, 0.3);
+    box-shadow: 0 10px 35px rgba(120, 0, 255, 0.25);
+}
+
+/* Заголовок */
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #d4b3ff;
+}
+
+/* Унифицированный стиль элементов */
+input, button {
+    width: 100%;
+    padding: 12px 14px;
+    margin-top: 12px;
+    border-radius: 10px;
+    border: none;
+    font-size: 15px;
+    box-sizing: border-box; /* ← ВАЖНО! Выровняет размеры */
+}
+
+/* Поля ввода */
+input {
+    background: rgba(255, 255, 255, 0.08);
+    color: #e0d4ff;
+    border: 1px solid rgba(160, 80, 255, 0.35);
+    height: 48px; /* ← Делает input одинаковым с кнопками */
+}
+
+input::placeholder {
+    color: #c7b7ff;
+}
+
+/* Кнопки */
+button {
+    cursor: pointer;
+    font-weight: bold;
+    background: #751aff;
+    color: white;
+    transition: 0.2s;
+    height: 48px; /* ← Фиксированная высота = инпутам */
+}
+
+button:hover {
+    background: #8f3bff;
+}
+
+/* Список */
+ul {
+    margin-top: 22px;
+    padding: 0;
+    list-style: none;
+}
+
+li {
+    background: rgba(140, 0, 255, 0.18);
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid rgba(180, 80, 255, 0.4);
+}
+
+/* Кнопка удаления */
+.btn {
+    background: #d33cff;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: 0.2s;
+}
+
+.btn:hover {
+    background: #e067ff;
+}
+
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Список студентов</h2>
+
+    <input type="text" id="nameInput" placeholder="Имя студента">
+    <button onclick="addStudent()">Добавить</button>
+
+    <input type="text" id="searchInput" placeholder="Поиск по имени">
+    <button onclick="searchStudent()">Найти</button>
+
+    <button onclick="sortStudents()">Сортировать по алфавиту</button>
+
+    <ul id="studentList"></ul>
+</div>
+
+<script>
+let students = [];
+let studentMap = new Map();
+
+// Добавление
+function addStudent() {
+    const name = document.getElementById("nameInput").value.trim();
+    if (!name) return alert("Введите имя!");
+
+    const id = Date.now();
+    const student = { id, name };
+
+    students.push(student);
+    studentMap.set(id, student);
+
+    renderList();
+    document.getElementById("nameInput").value = "";
+}
+
+// Удаление
+function deleteStudent(id) {
+    students = students.filter(s => s.id !== id);
+    studentMap.delete(id);
+    renderList();
+}
+
+// Поиск
+function searchStudent() {
+    const search = document.getElementById("searchInput").value.toLowerCase();
+    const results = students.filter(s => s.name.toLowerCase().includes(search));
+    renderList(results);
+}
+
+// Сортировка
+function sortStudents() {
+    students.sort((a, b) => a.name.localeCompare(b.name));
+    renderList();
+}
+
+// Отрисовка
+function renderList(list = students) {
+    const ul = document.getElementById("studentList");
+    ul.innerHTML = "";
+
+    list.forEach(s => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+            ${s.name}
+            <span class="btn" onclick="deleteStudent(${s.id})">Удалить</span>
+        `;
+        ul.appendChild(li);
+    });
+}
+</script>
+
+</body>
+</html>
